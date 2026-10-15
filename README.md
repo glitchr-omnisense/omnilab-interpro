@@ -41,4 +41,17 @@ states its licence at [interpro/about/license](https://www.ebi.ac.uk/interpro/ab
 Blum M. et al., "InterPro: the protein sequence classification resource in 2025", Nucleic Acids
 Res. 2025, [10.1093/nar/gkae1082](https://doi.org/10.1093/nar/gkae1082). No rate is published.
 
+## Responsibility
+
+This package is an independent, unofficial client: it is not affiliated with, endorsed by or
+sponsored by EMBL-EBI (InterPro). It reaches their service on behalf of whoever runs it, and it does not
+redistribute their data beyond the short excerpts recorded as test fixtures. Its MIT licence
+covers this package's code only and grants no right to the service or to its data.
+
+Whoever installs and runs this package is responsible for complying with the terms above, for
+obtaining whatever they require (an account, a key, a licence or subscription, an attribution or
+a citation, a rate limit to respect), and for any use made of what it returns. The authors
+publish it free of charge, make no commercial use of it, and accept no liability for how it is
+used (see [LICENSE](LICENSE)).
+
 License: MIT.
