@@ -1,0 +1,46 @@
+{
+    "name": "omnilab/interpro",
+    "type": "library",
+    "description": "Omnilab InterPro: an InterPro entry (IPR000971) or a Pfam family (PF00042) - its name, type, description, member signatures, GO terms, protein and structure counts, Pfam clan, representative structure, overlapping entries and hierarchy - a UniProt protein with the InterPro entries and Pfam families it matches, by type and position, as related things, and a search of InterPro entries, through the InterPro API, no key needed.",
+    "keywords": [
+        "science",
+        "biology",
+        "interpro",
+        "pfam",
+        "protein domains",
+        "protein families",
+        "uniprot",
+        "omnilab"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco Meyer",
+            "email": "marco.meyer@glitchr.io"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "glitchr/omnilab": "^1.0@dev",
+        "symfony/http-client": "^6.4|^7.0|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omnilab\\InterPro\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Omnilab\\InterPro\\Tests\\": "Tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
