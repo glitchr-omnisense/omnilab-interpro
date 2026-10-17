@@ -1,6 +1,6 @@
 # omnilab/interpro
 
-InterPro for [glitchr/omnilab](https://github.com/glitchr-studio/omnilab): an InterPro entry
+InterPro for [omniscient/omnilab](https://github.com/glitchr-studio/omnilab): an InterPro entry
 (`IPR000971`, globin) or a Pfam family (`PF00042`) with its name, type, description, member
 signatures, GO terms, how many proteins, structures and taxa it covers, its Pfam clan, its
 representative structure, its overlapping entries and its place in InterPro's hierarchy; a UniProt
