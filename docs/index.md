@@ -1,5 +1,11 @@
 # omnilab/interpro
 
+InterPro (EMBL-EBI), through its API (`https://www.ebi.ac.uk/interpro/api/`), for
+[omnisense/omnilab](https://github.com/glitchr-omnisense/omnilab): InterPro entries (`IPR000971`)
+and Pfam families (`PF00042`) - type, description, member signatures, GO terms, counts, clan,
+hierarchy -, and a UniProt protein's domains and families with their positions, as entities; a
+search. No key.
+
 ## Installation
 
 ```sh
@@ -13,6 +19,43 @@ $interpro = (new InterProSourceFactory($httpClient))->create([
     'mailto' => 'support@glitchr.io',  // optional
 ]);
 ```
+
+## Credentials
+
+None: InterPro's API takes no key and no account.
+
+## Options
+
+The factory's options, with the defaults it applies (`InterProSourceFactory`):
+
+| Option | Type | Default | Required | Effect |
+|---|---|---|---|---|
+| `mailto` | `?string` | null | no | a contact address, sent in the User-Agent |
+| `user_agent` | `?string` | null | no | the whole User-Agent, in place of the one made from `mailto` |
+| `throttle` | `float` | `0` | no | seconds left between two calls: InterPro publishes no rate |
+| `base_uri` | `string` | `https://www.ebi.ac.uk/interpro/api/` | no | the API the source calls |
+
+## Capabilities
+
+`capabilities()` answers `entity`, `search`; an operation it does not answer throws `NotSupportedException` before any call.
+
+| Capability | Supported | |
+|---|---|---|
+| `entity` | yes | an InterPro entry (`IPR000971`), a Pfam family (`PF00042`), or a UniProt accession (the protein and every entry it matches, with their positions: two calls); another base refused before any call |
+| `search` | yes | InterPro's text search over its entries, by accession (not ranked), 200 a page at most, the next page by the answer's cursor, with a `total`; a domain other than biology answers an empty page |
+| `series` | no |  |
+| `products` | no |  |
+| `occurrences` | no |  |
+| `datasets` | no |  |
+| `jobs` | no |  |
+| `open` | no |  |
+| `structure` | no |  |
+| `cross_references` | no | none of the same thing: an entry's members, parent, children, GO terms, structure, and a protein's entries are `related` |
+| `forecast` | no |  |
+| `historical` | no |  |
+| `area` | no |  |
+| `station` | no |  |
+| `cloud_cover` | no |  |
 
 ## The schemes
 
@@ -100,6 +143,56 @@ tens of thousands), domain architectures, taxonomy and proteome breakdowns, stru
 models of an entry, InterPro's sets (Pfam clans as entities), the HMMs and alignments, and the
 sequence's own features (InterPro's `residue` endpoints).
 
+## Example
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\InterPro\InterProSourceFactory;
+use Omnilab\Model\Scheme;
+use Omnilab\Source\Query;
+use Symfony\Component\HttpClient\HttpClient;
+
+$interpro = (new InterProSourceFactory(HttpClient::create()))->create(['mailto' => 'you@example.org']);
+
+$globin = $interpro->entity('IPR000971');
+echo $globin->id->display(), ' ', $globin->label, ' (', $globin->kind, '): ', $globin->value('proteins'), ' proteins, member ', $globin->value('member'), "\n";
+
+$hbb = $interpro->entity('uniprot:P68871');
+echo $hbb->label, ': ', implode(', ', array_map('strval', $hbb->properties('domain'))), "\n";
+echo '  families: ', implode(', ', $hbb->related('family')->values(Scheme::INTERPRO)), "\n";
+
+$page = $interpro->search(new Query('globin', limit: 3));
+printf("%d entries match \"globin\"; the first %d: %s\n", $page->total, count($page), implode(', ', array_map(static fn ($e) => $e->id->display(), $page->items)));
+```
+
+```
+IPR000971 Globin (domain): 35483 proteins, member PS01033 Globin domain profile (PROSITE profiles)
+Hemoglobin subunit beta: Globin (IPR000971): 3-147
+  families: IPR002337, IPR050056
+47 entries match "globin"; the first 3: IPR000329, IPR000971, IPR001032
+```
+
+(as answered on 2026-10-27: four calls; `value('member')` gives the first member, `properties('member')`
+every one)
+
+```yaml
+# config/packages/omnilab.yaml
+omnilab:
+    sources:
+        interpro: { factory: interpro, options: { mailto: '%env(OMNILAB_MAILTO)%' } }
+```
+
+## Errors
+
+Every call goes through `HttpSource`: a 404 or a 410 (and a 204) is null - an empty page for a list -; a 429 is a `RateLimitedException` (`retryAfter` from `Retry-After`); a 5xx, a time-out or a host that does not answer an `UnavailableException`; any other 4xx a `ProviderException` with its `status` and what the service said; an answer that is not JSON a `ProviderException`, a web page answered for JSON an `UnavailableException`.
+
+InterPro's own: "nothing found" is a 204 (an unknown entry, protein or search): null, an empty
+page; the calls go over HTTP/1.1 so that curl reads it. Before any call: an identifier of a base
+InterPro does not read here (ChEBI, GO, NCBI Gene...) (`NotSupportedException`).
+
 ## Verified, and not
 
 Against the real service on 2026-10-15 (InterPro 110.0): the globin domain IPR000971 (35,483
@@ -109,5 +202,19 @@ IPR000971); hemoglobin beta P68871 and its six InterPro and Pfam matches; an unk
 unknown protein (204); the search for "globin" in two pages of three; the Collector's walk above.
 The fixtures in `Tests/Fixtures/` are its answers. Each call took 1 to 5 s.
 
+Again on 2026-10-27: IPR000971, hemoglobin beta's matches, the search for "globin" (47 entries;
+the example above).
+
 Not verified: a rate limit (none published, none met); a protein matching more than 200 entries
 (one page is read); the licence's text (its page is rendered by a script).
+
+## Responsibility
+
+This package is an independent, unofficial client: it is not affiliated with, endorsed by or
+sponsored by InterPro or the EMBL-EBI. InterPro is free to use under the
+[EMBL-EBI's terms of use](https://www.ebi.ac.uk/about/terms-of-use), its licence stated on its
+site, and asks to be cited (Blum M. et al., Nucleic Acids Res. 2025, 10.1093/nar/gkae1082), as the
+README's [Terms of use](https://github.com/glitchr-omnisense/omnilab-interpro#terms-of-use) says.
+Whoever runs the package is responsible for complying with them and for any use made of what it
+returns: see the README's
+[Responsibility](https://github.com/glitchr-omnisense/omnilab-interpro#responsibility) section.
