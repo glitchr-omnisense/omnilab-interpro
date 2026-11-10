@@ -41,6 +41,17 @@ states its licence at [interpro/about/license](https://www.ebi.ac.uk/interpro/ab
 Blum M. et al., "InterPro: the protein sequence classification resource in 2025", Nucleic Acids
 Res. 2025, [10.1093/nar/gkae1082](https://doi.org/10.1093/nar/gkae1082). No rate is published.
 
+## Usage policy
+
+Declared as data in [`policy.json`](policy.json) (read at https://interpro-documentation.readthedocs.io/en/latest/license.html on 2026-11-10), and honoured on every request by the
+core: a limit reached waits when its window ends within `max_wait` seconds, else the request is not
+sent ([Usage policies](https://github.com/glitchr-omnisense/omnilab/blob/1.x/docs/policies.md)).
+
+- Limits: not published (unknown).
+- Licence: CC0-1.0; commercial use: allowed.
+- Credit: not required: Blum M. et al., "InterPro: the protein sequence classification resource in 2025", Nucleic Acids Res. 2025, doi:10.1093/nar/gkae1082 (https://interpro-documentation.readthedocs.io/en/latest/license.html).
+- Needs: nothing.
+
 ## Responsibility
 
 This package is an independent, unofficial client: it is not affiliated with, endorsed by or
