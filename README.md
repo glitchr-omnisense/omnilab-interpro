@@ -34,6 +34,34 @@ Entries are named in the core's `interpro` and `pfam` schemes. The `Collector` r
 from any source that gives a UniProt accession (`$collector->collect('uniprot', 'P68871')`): the
 protein's domains and families join it as related things.
 
+## Install and a first call
+
+```sh
+composer require omnilab/interpro
+```
+
+A real call, with no account and no key: the globin domain in InterPro. `mailto` is your address,
+sent in the User-Agent so that the service can reach you before it blocks a caller; the source keeps
+to the limits its [`policy.json`](policy.json) declares.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\InterPro\InterProSourceFactory;
+
+$interpro = (new InterProSourceFactory())->create(['mailto' => 'you@example.org']);   // your address, in the User-Agent
+$globin = $interpro->entity('IPR000971');
+echo $globin->id, ' ', $globin->label, ' (', $globin->kind, ')', "\n";
+```
+
+Its output on 2026-11-13:
+
+```
+interpro:IPR000971 Globin (domain)
+```
+
 ## Terms of use
 
 Free to use under the [EMBL-EBI's terms of use](https://www.ebi.ac.uk/about/terms-of-use); InterPro
